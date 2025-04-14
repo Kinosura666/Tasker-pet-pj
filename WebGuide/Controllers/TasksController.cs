@@ -148,12 +148,12 @@ namespace WebGuide.Controllers
 
                 var subject = "Нове завдання створено";
                 var html = $@"
-            <h2>📌 Нова задача: <strong>{model.Title}</strong></h2>
-            <p><strong>Опис:</strong> {model.Description}</p>
-            <p><strong>Дедлайн:</strong> {model.Deadline:g}</p>
-            {(string.IsNullOrEmpty(model.FileUrl) ? "" : $"<p><strong>Файл:</strong> <a href='{model.FileUrl}'>Переглянути</a></p>")}
-        ";
-
+                    <h2>📌 Нова задача: <strong>{model.Title}</strong></h2>
+                    <p><strong>Опис:</strong> {model.Description}</p>
+                    <p><strong>Дедлайн:</strong> {model.Deadline:g}</p>
+                    {(string.IsNullOrEmpty(model.FileUrl) ? "" : $"<p><strong>Файл:</strong> <a href='{model.FileUrl}'>Переглянути</a></p>")}
+                        ";
+                _logger.LogWarning(" Пошта має бути надіслана на {Email}", currentUser.Email);
                 await mailjetService.SendEmailAsync(
                     toEmail: currentUser.Email,
                     toName: currentUser.Username,

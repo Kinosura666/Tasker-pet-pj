@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddHttpClient<TrelloService>();
 builder.Services.AddSingleton<GoogleCloudStorageService>();
-builder.Services.AddSingleton<MailjetEmail>();
+builder.Services.AddHttpClient<MailjetEmail>(); 
 builder.Services.AddHostedService<TaskReminderBackgroundService>();
 builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<StatisticsService>();
