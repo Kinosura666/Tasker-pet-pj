@@ -17,9 +17,27 @@ namespace WebGuide.Services
             var projectId = configuration["GoogleCloudStorage:ProjectId"];
             _bucketName = configuration["GoogleCloudStorage:BucketName"];
             var credentialFilePath = configuration["GoogleCloudStorage:CredentialFilePath"];
-            var credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(credentialFilePath);
+
+            GoogleCredential credential;
+
+            if (!string.IsNullOrEmpty(credentialFilePath) && File.Exists(credentialFilePath))
+            {
+                credential = GoogleCredential.FromFile(credentialFilePath);
+            }
+            else
+            {
+                var credentialsJson = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
+
+                if (string.IsNullOrEmpty(credentialsJson))
+                    throw new Exception("GOOGLE_CREDENTIALS_JSON is not set!");
+
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(credentialsJson));
+                credential = GoogleCredential.FromStream(stream);
+            }
+
             _storageClient = StorageClient.Create(credential);
         }
+
 
         public GoogleCloudStorageService(StorageClient storageClient, string bucketName)
         {

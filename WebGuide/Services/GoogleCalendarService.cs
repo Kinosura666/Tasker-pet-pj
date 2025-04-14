@@ -41,7 +41,6 @@ namespace WebGuide.Services
             await calendarService.Events.Insert(newEvent, "primary").ExecuteAsync();
         }
 
-        // Для юніт-тестів:
         public void OverrideCalendarService(CalendarService customService)
         {
             calendarService = customService;
