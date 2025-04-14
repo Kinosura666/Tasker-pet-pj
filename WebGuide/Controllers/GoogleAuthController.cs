@@ -72,7 +72,7 @@ namespace WebGuide.Controllers
             var token = await flow.ExchangeCodeForTokenAsync(
                 userId: "",
                 code: code,
-                redirectUri: "https://https://tasker-lce6.onrender.com/oauth2callback",
+                redirectUri: _config["Authentication:Google:RedirectUri"],
                 taskCancellationToken: CancellationToken.None
             );
 
