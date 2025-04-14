@@ -23,6 +23,7 @@
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
-	 <EmbeddedResource Include="Fonts\DejaVuSans.ttf" />
+	<PackageReference Include="SkiaSharp" Version="3.0.0-preview.125" />
+	<EmbeddedResource Include="Fonts\DejaVuSans.ttf" />
   </ItemGroup>
 </Project>
