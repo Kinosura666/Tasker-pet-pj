@@ -24,10 +24,13 @@ jobs:
       run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > google-credentials.json
 
     - name: Create google-secret.json (optional)
-      if: ${{ secrets.GOOGLE_SECRET_JSON != '' }}
-      run: echo '${{ secrets.GOOGLE_SECRET_JSON }}' > google-secret.json
+      run: |
+        if [ -n "${{ secrets.GOOGLE_SECRET_JSON }}" ]; then
+          echo "${{ secrets.GOOGLE_SECRET_JSON }}" > google-secret.json
+        else
+          echo "google-secret.json not provided, skipping"
+        fi
 
-    # ⚙️ Складання і тестування
     - name: Restore dependencies
       run: dotnet restore
 
