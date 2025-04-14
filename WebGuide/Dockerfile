@@ -3,7 +3,7 @@ WORKDIR /src
 COPY . .
 
 WORKDIR /src/coursach1/WebGuide
-RUN dotnet publish WebGuide.csproj -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
