@@ -255,8 +255,9 @@ namespace WebGuide.Controllers
             {
                 task.IsCompleted = true;
                 task.CompletedAt = DateTime.UtcNow;
+                var completedLocal = task.CompletedAt?.ToLocalTime();
 
-                _logger.LogInformation("✅ Завдання ID {Id} позначене як виконане о {Time}", task.Id, task.CompletedAt);
+                _logger.LogInformation("✅ Завдання ID {Id} позначене як виконане о {Time}", task.Id, completedLocal);
 
                 await _context.SaveChangesAsync();
             }
