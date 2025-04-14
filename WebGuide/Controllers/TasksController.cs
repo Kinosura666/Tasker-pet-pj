@@ -123,7 +123,7 @@ namespace WebGuide.Controllers
                     model.FileUrl = fileUrl;
                 }
             }
-            model.Deadline = model.Deadline;
+            model.Deadline = model.Deadline.ToUniversalTime();
             _context.Tasks.Add(model);
             await _context.SaveChangesAsync();
 
@@ -225,7 +225,7 @@ namespace WebGuide.Controllers
 
                 existingTask.Title = model.Title;
                 existingTask.Description = model.Description;
-                existingTask.Deadline = model.Deadline; 
+                existingTask.Deadline = model.Deadline.ToUniversalTime();
                 existingTask.Priority = model.Priority;
 
 

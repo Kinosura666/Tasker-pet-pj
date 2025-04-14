@@ -144,6 +144,7 @@ namespace WebGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportPdf()
         {
+            CustomFontResolver.Register();
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             var now = DateTime.UtcNow;
@@ -160,10 +161,10 @@ namespace WebGuide.Controllers
             var document = new PdfDocument();
             var page = document.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
-            var font = new XFont("Verdana", 12);
+            var font = new XFont("DejaVuSans", 12);
 
             int y = 40;
-            gfx.DrawString("📈 Статистика користувача", new XFont("Verdana", 16, XFontStyle.Bold), XBrushes.Black, new XPoint(40, y));
+            gfx.DrawString("📈 Статистика користувача", new XFont("DejaVuSans", 16, XFontStyle.Bold), XBrushes.Black, new XPoint(40, y));
             y += 40;
 
             gfx.DrawString($"Загальна кількість завдань: {allTasks.Count}", font, XBrushes.Black, new XPoint(40, y += 25));
