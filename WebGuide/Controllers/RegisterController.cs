@@ -45,7 +45,7 @@ namespace WebGuide.Controllers
                     };
 
                     _context.Users.Add(user);
-                    await _context.SaveChangesAsync(); // <=== МОЖЛИВО ТУТ ПАДАЄ
+                    await _context.SaveChangesAsync();
 
                     var claims = new List<Claim>
             {
