@@ -7,6 +7,11 @@ RUN dotnet publish WebGuide.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -y libfontconfig1 libfreetype6 libpng16-16 libharfbuzz0b libexpat1 libuuid1 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
 
 ENTRYPOINT ["dotnet", "WebGuide.dll"]
