@@ -1,0 +1,113 @@
+﻿@model IEnumerable<WebGuide.Models.TaskEntity>
+@{
+    ViewData["Title"] = "Список завдань";
+}
+
+<link rel="stylesheet" href="~/css/tasks.css" asp-append-version="true" />
+
+<div class="tasks-header ">
+    <h2 class="tasks-title">📋 Мої завдання</h2>
+    <form method="get" class="task-filters">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+
+            <label>
+                Сортувати:
+                <select name="sortBy" class="form-select form-select-sm">
+                    <option value="deadline" selected="@(ViewBag.SortBy == "deadline")">За дедлайном</option>
+                    <option value="priorityDesc" selected=@(ViewBag.SortBy == "priorityDesc")>Від найважливіших</option>
+                    <option value="priorityAsc" selected=@(ViewBag.SortBy == "priorityAsc")>Від найменш важливих</option>
+                    <option value="hoursLeft" selected="@(ViewBag.SortBy == "hoursLeft")">За годинами до дедлайну</option>
+                </select>
+            </label>
+
+            <label>
+                Пріоритет:
+                <select name="priorityFilter" class="form-select form-select-sm">
+                    <option value="" selected="@(ViewBag.PriorityFilter == null)">Усі</option>
+                    <option value="1" selected="@(ViewBag.PriorityFilter == 1)">1</option>
+                    <option value="2" selected="@(ViewBag.PriorityFilter == 2)">2</option>
+                    <option value="3" selected="@(ViewBag.PriorityFilter == 3)">3</option>
+                    <option value="4" selected="@(ViewBag.PriorityFilter == 4)">4</option>
+                    <option value="5" selected="@(ViewBag.PriorityFilter == 5)">5</option>
+                </select>
+            </label>
+
+            <label class="form-check">
+                <input type="checkbox"
+                       class="form-check-input"
+                       name="showCompleted"
+                       value="true"
+                @(ViewContext.HttpContext.Request.Query["showCompleted"] == "true" ? "checked" : null) />
+                Показати виконані
+            </label>
+
+
+
+            <button type="submit" class="btn btn-sm btn-outline-light">🔍 Застосувати</button>
+            <a href="@Url.Action("Index", "Tasks")" class="btn btn-sm btn-outline-secondary">♻️ Скинути</a>
+        </div>
+    </form>
+    <a asp-action="Create" class="btn btn-primary">➕ Додати завдання</a>
+</div>
+
+
+
+
+<div class="task-list d-flex flex-wrap gap-4">
+    @foreach (var task in Model)
+    {
+        string borderColor = task.Priority switch
+        {
+            1 => "#dc3545",
+            2 => "#fd7e14",
+            _ => "#198754"
+        };
+        var isOverdue = task.Deadline < DateTime.Now && !task.IsCompleted;
+        var isCompleted = task.IsCompleted ? "opacity-75" : "";
+
+        <div class="task-card bg-dark @isCompleted @(isOverdue ? "task-overdue" : "")" style="border: 2px solid @borderColor;">
+
+            <h5 class="mb-2">@task.Title</h5>
+
+            <p class="mb-1"><strong>📝 Опис:</strong><br />@task.Description</p>
+            <p class="mb-1"><strong>📅 Дедлайн:</strong><br />@task.Deadline.ToString("g")</p>
+            <p class="mb-1"><strong>⭐ Пріоритет:</strong> @task.Priority</p>
+
+            @if (!string.IsNullOrEmpty(task.FileUrl))
+            {
+                <p class="mb-2">
+                    <strong>📎 Файл:</strong> <a href="@task.FileUrl" target="_blank">Переглянути</a>
+                </p>
+            }
+
+            <div>
+                @if (isOverdue)
+                {
+                    <div class="overdue-alert alert alert-danger py-2 px-3 rounded-3 mb-2">
+                        ❌ Завдання прострочене!
+                    </div>
+                }
+
+                @if (task.IsCompleted)
+                {
+                    <div class="alert alert-success py-2 px-3 rounded-3">
+                        ✅ Завдання виконано <strong>@task.CompletedAt?.ToString("g")</strong><br />
+                        ⏱ За <strong>@(Math.Round((task.CompletedAt.Value - task.Deadline).TotalHours * -1)) год</strong> до дедлайну
+                    </div>
+                }
+                else if (!isOverdue)
+                {
+                    <form asp-action="Complete" method="post" class="btn-stack">
+                        <input type="hidden" name="id" value="@task.Id" />
+                        <button type="submit" class="btn btn-outline-success btn-sm">✅ Позначити як виконане</button>
+                    </form>
+                }
+
+                <div class="btn-stack">
+                    <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-outline-primary btn-sm">✏️ Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-danger">🗑 Видалити</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

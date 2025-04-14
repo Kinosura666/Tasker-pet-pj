@@ -1,0 +1,46 @@
+﻿.task-delete-card {
+    background-color: #fff0f0;
+    border: 2px dashed #dc3545; /* пунктирна червона рамка */
+    border-radius: 12px;
+    box-shadow: 4px 4px 16px rgba(255, 0, 0, 0.15);
+    padding: 30px;
+    color: #2e2e2e;
+    position: relative;
+    overflow: hidden;
+}
+
+    /* Декоративна псевдо-рамка */
+    .task-delete-card::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        border: 2px solid #ffaaaa;
+        border-radius: 16px;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+
+    .task-delete-card h2 {
+        border-bottom: 1px solid #ff9999;
+        padding-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .task-delete-card strong {
+        color: #1b1b1b;
+    }
+
+    .task-delete-card .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        font-weight: 600;
+    }
+
+    .task-delete-card .btn-outline-light {
+        border: 1px solid #ccc;
+        color: #333;
+    }

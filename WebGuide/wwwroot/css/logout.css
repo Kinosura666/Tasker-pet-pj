@@ -1,0 +1,42 @@
+﻿.file-navbar {
+    background-color: #e0e0e0;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+    .file-navbar h1 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+.file-window {
+    background-color: white;
+    margin: 50px auto;
+    padding: 40px;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.file-icon {
+    font-size: 50px;
+    color: #555;
+}
+
+.logout-btn {
+    margin-top: 30px;
+    padding: 10px 25px;
+    background-color: #007aff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    .logout-btn:hover {
+        background-color: #005fce;
+    }

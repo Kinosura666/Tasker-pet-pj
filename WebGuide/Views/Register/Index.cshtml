@@ -1,0 +1,49 @@
+﻿@model Register
+@{
+    ViewData["Title"] = "Register Page";
+}
+
+<div class="login-container">
+    <div class="login-info">
+        <h2>Wise man once said...</h2>
+        <p>
+            "Yesterday's the past, tomorrow's the future,
+            but today is a gift.
+            That's why it's called the present."
+            Forget about the past and start
+            focusing on your future goals.
+            Aim straight forward to your succes with Tasker.
+            Set up new challenges for yourself and we will make
+            sure to remind you about them.
+        </p>
+    </div>
+    <img class="sigmapng" src="/img/sigma.png" alt="No pic unlucky :C">
+</div>
+
+<form method="post" asp-controller="Register" asp-action="Register" class="form">
+    <span class="input-span">
+        <label asp-for="Username" class="label"></label>
+        <input asp-for="Username" />
+        <span asp-validation-for="Username"></span>
+    </span>
+    <span class="input-span">
+        <label asp-for="Email" class="label"></label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </span>
+    <span class="input-span">
+        <label asp-for="Password" class="label"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </span>
+    <span class="input-span">
+        <label asp-for="confirmPassword" class="label"></label>
+        <input asp-for="confirmPassword" />
+        <span asp-validation-for="confirmPassword"></span>
+    </span>
+    <input class="submit" type="submit" value="Index" />
+    <span class="span">Already have an account? <a href="/login">Log in</a></span>
+</form>
+
+
+

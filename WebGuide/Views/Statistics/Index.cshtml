@@ -1,0 +1,60 @@
+﻿@model WebGuide.Models.Statistics
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<div class="container mt-5">
+    <div class="card p-4 shadow-sm bg-dark text-light">
+        <h2 class="mb-4">📈 Статистика вашої активності</h2>
+        <div class="row g-4">
+            <!-- Блок 1 -->
+            <div class="col-md-6">
+                <div class="p-3 border rounded h-100">
+                    <h5>Загальна кількість завдань:</h5>
+                    <p>@Model.TotalTasks</p>
+                    <h5>Виконано:</h5>
+                    <p>@Model.CompletedTasks</p>
+                    <h5>Прострочено:</h5>
+                    <p>@Model.OverdueTasks</p>
+                </div>
+            </div>
+
+            <!-- Блок 2 -->
+            <div class="col-md-6">
+                <div class="p-3 border rounded h-100">
+                    <h5>Очікують виконання:</h5>
+                    <p>За 3 дні: @Model.TasksNext3Days</p>
+                    <p>За 7 днів: @Model.TasksNext7Days</p>
+                    <p>За 30 днів: @Model.TasksNext30Days</p>
+                    <hr />
+                    <h5>Виконано (%):</h5>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: @(Model.CompletionRate.ToString(System.Globalization.CultureInfo.InvariantCulture))%"
+                             aria-valuenow="@Model.CompletionRate"
+                             aria-valuemin="0" aria-valuemax="100">
+                            @Model.CompletionRate%
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блоки 3 і 4 в один рядок -->
+            <div class="col-md-6">
+                <div class="text-center p-3 border rounded h-100">
+                    <h4>📊 Статистика по категоріях</h4>
+                    <img src="/Statistics/ChartBar" alt="Бар діаграма" class="img-fluid mt-3" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="text-center p-3 border rounded h-100">
+                    <h4>📊 Статистика виконання завдань</h4>
+                    <img src="/Statistics/Chart" alt="Діаграма" class="img-fluid mt-3" />
+                </div>
+            </div>
+            <a href="/Statistics/ExportPdf" class="btn btn-outline-light me-2">📄 Експорт у PDF</a>
+        </div>
+    </div>
+</div>

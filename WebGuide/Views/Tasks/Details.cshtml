@@ -1,0 +1,49 @@
+﻿@model WebGuide.Models.TaskEntity
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+@{
+    ViewData["Title"] = "Деталі завдання";
+}
+
+<div class="container my-5">
+    <div class="task-card mx-auto" style="max-width: 600px;">
+        <h2 class="mb-4">📋 Деталі завдання</h2>
+
+        <div class="mb-3">
+            <strong>Назва:</strong>
+            <p>@Model.Title</p>
+        </div>
+
+        <div class="mb-3">
+            <strong>Опис:</strong>
+            <p>@Model.Description</p>
+        </div>
+
+        <div class="mb-3">
+            <strong>Дедлайн:</strong>
+            <p>@Model.Deadline.ToString("g")</p>
+        </div>
+        <div class="mb-3">
+            <strong>Файл:</strong>
+            @if (!string.IsNullOrEmpty(Model.FileUrl))
+            {
+                <p><a href="@Model.FileUrl" target="_blank">Переглянути прикріплений файл</a></p>
+            }
+            else
+            {
+                <p><em>Файл не додано</em></p>
+            }
+        </div>
+
+        <div class="mb-4">
+            <strong>Пріоритет:</strong>
+            <p>@Model.Priority</p>
+        </div>
+
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">✏️ Редагувати</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">📋 До списку</a>
+            <a asp-controller="Tasks" asp-action="Calendar" class="btn btn-outline-success">📆 До календаря</a>
+        </div>
+
+    </div>
+</div>

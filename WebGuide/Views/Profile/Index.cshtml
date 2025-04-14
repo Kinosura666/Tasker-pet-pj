@@ -1,0 +1,93 @@
+﻿@model ProfileModel
+@{
+    ViewData["Title"] = "Профіль користувача";
+}
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <img src="@(!string.IsNullOrEmpty(Model.ExistingImageUrl) ? Model.ExistingImageUrl : Url.Content("~/images/user-placeholder.png"))"
+                         alt="Фото користувача"
+                         class="user-photo me-3" />
+
+                    <div>
+                        <h2 class="mb-0">Привіт, @Model.Username!</h2>
+                        <p class="text-muted mb-0">Це твій профіль</p>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="mb-3">
+                    <h5>Контактна інформація</h5>
+                    <p><strong>Email:</strong> <a href="mailto:@Model.Email">@Model.Email</a></p>
+                </div>
+
+                <div class="mb-3">
+                    <h5>Кількість завдань</h5>
+                    <p>@Model.TasksCount завдань до виконання</p>
+                </div>
+
+                <div class="mb-3">
+                    <h5>Дата створення користувача</h5>
+                    <p>@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+                </div>
+                <div class="mb-4">
+                    <a href="/Tasks" class="btn btn-outline-secondary me-2">📋 Перейти до завдань</a>
+                    <a href="/Tasks/Calendar" class="btn btn-outline-info">🗓 Перейти до календаря</a>
+                </div>
+
+                @if (!(ViewBag.GoogleAuthorized ?? false))
+                {
+                    <div class="alert alert-warning mt-3">
+                        <h5>⛔ Google авторизація</h5>
+                        <p>Ви ще <strong>не авторизувались через Google</strong>. Це потрібно для додавання завдань у Google Calendar.</p>
+                        <a href="/google-login" class="btn btn-outline-danger mt-2">🔐 Авторизуватись через Google</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-success mt-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5>✅ Google авторизація активна</h5>
+                            <p>Ваш обліковий запис підключено до Google Calendar.</p>
+                        </div>
+                        <a href="/google-login" class="btn btn-outline-primary">🔄 Повторна авторизація</a>
+                    </div>
+                }
+
+
+                <a href="/Profile/Edit" class="btn btn-primary">Редагувати профіль</a>
+                <a asp-controller="Login" asp-action="Logout" class="btn btn-danger mt-2">Вийти з акаунту</a>
+                <button class="btn btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                    🗑 Видалити акаунт
+                </button>
+
+                <!-- Модальне вікно підтвердження -->
+                <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmDeleteLabel">Підтвердження</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                            </div>
+                            <div class="modal-body">
+                                Ви дійсно хочете <strong>видалити акаунт</strong>? Цю дію не можна скасувати.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">❌ Скасувати</button>
+                                <form asp-action="DeleteAccount" method="post">
+                                    <button type="submit" class="btn btn-danger">✅ Видалити</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

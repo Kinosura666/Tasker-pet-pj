@@ -1,0 +1,56 @@
+﻿@model WebGuide.Models.TaskEntity
+<link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
+@{
+    ViewData["Title"] = "Створення завдання";
+}
+
+<div class="container my-5">
+    <div class="task-form-card mx-auto" style="max-width: 600px;">
+        <h2 class="mb-4">📝 Створення завдання</h2>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <form asp-action="Create" asp-controller="Tasks" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Deadline" class="form-label"></label>
+                <input asp-for="Deadline" class="form-control" type="datetime-local" />
+                <span asp-validation-for="Deadline" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Priority" class="form-label"></label>
+                <input asp-for="Priority" class="form-control" type="number" min="1" max="5" />
+                <span asp-validation-for="Priority" class="text-danger small"></span>
+            </div>
+            <div class="form-check">
+                <input asp-for="AddToGoogleCalendar" class="form-check-input" />
+                <label class="form-check-label" asp-for="AddToGoogleCalendar">
+                    Додати завдання до Google Календаря
+                </label>
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Прикріпити файл</label>
+                <input type="file" name="attachment" class="form-control" />
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <input type="submit" value="✅ Створити" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-outline-dark">← Назад</a>
+            </div>
+        </form>
+    </div>
+</div>

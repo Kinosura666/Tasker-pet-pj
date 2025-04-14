@@ -1,0 +1,35 @@
+﻿.task-form-card {
+    background-color: #fff8dc;
+    border: 1.5px solid #d0b16d;
+    border-radius: 10px;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.2);
+    padding: 30px;
+    color: #2e2e2e;
+}
+
+    .task-form-card h2 {
+        font-weight: 700;
+        color: #3a3a3a;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+    }
+
+    .task-form-card label {
+        font-weight: 600;
+        color: #1b1b1b;
+    }
+
+    .task-form-card input.form-control,
+    .task-form-card textarea.form-control {
+        border: 1px solid #d4af37;
+        border-radius: 6px;
+        background-color: #fffef5;
+        color: #2a2a2a;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+        .task-form-card input.form-control:focus,
+        .task-form-card textarea.form-control:focus {
+            border-color: #ffcc00;
+            box-shadow: 0 0 4px rgba(255, 204, 0, 0.6);
+        }

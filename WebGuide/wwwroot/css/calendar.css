@@ -1,0 +1,86 @@
+﻿body {
+    background-color: #1e1e1e;
+    color: #f8f9fa;
+    margin: 0 auto;
+    max-width: 1920px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calendar-page {
+    padding: 32px 64px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.calendar-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #f8f9fa;
+}
+
+#calendar {
+    background-color: #2c2f33;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+/* FullCalendar specific overrides */
+.fc {
+    color: #f8f9fa;
+    background-color: transparent;
+}
+
+.fc-toolbar-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.fc-button {
+    background-color: #343a40;
+    border: none;
+    color: #f8f9fa;
+}
+
+    .fc-button:hover {
+        background-color: #495057;
+    }
+
+.fc-daygrid-event {
+    background-color: #198754;
+    border: none;
+    color: white;
+    font-weight: 500;
+    padding: 2px 4px;
+    border-radius: 6px;
+}
+
+    .fc-daygrid-event:hover {
+        background-color: #20c997;
+    }
+
+.fc-day-today {
+    background-color: #252aab !important; 
+}
+
+.fc-daygrid-day-number{
+    color: white;
+}
+
+    .fc-daygrid-day-number:hover {
+        color: #5ce5d2;
+    }
+
+.fc-event:hover {
+    background-color: #9952f2 !important; 
+    color: #fff !important;
+    cursor: pointer;
+    transform: scale(1.02); 
+}
+

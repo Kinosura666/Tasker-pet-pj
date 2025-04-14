@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Logout";
+}
+
+<div class="file-navbar">
+    <h1>Файли</h1>
+</div>
+
+<div class="file-window">
+    <div class="file-icon">📁</div>
+    <h2>Вийти з акаунту?</h2>
+    <p>Натисніть кнопку нижче, щоб завершити сеанс.</p>
+
+    <form asp-controller="Login" asp-action="Logout" method="post">
+        <button class="logout-btn" type="submit">🚪 Вийти</button>
+    </form>
+</div>

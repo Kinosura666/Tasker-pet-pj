@@ -1,0 +1,31 @@
+﻿.task-card {
+    background-color: #fff8dc;
+    border: 1.5px solid #d0b16d;
+    border-radius: 10px;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.2);
+    padding: 30px;
+    color: #2e2e2e;
+    transition: transform 0.2s ease;
+}
+
+    .task-card h2 {
+        font-weight: 700;
+        color: #3a3a3a;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+    }
+
+    .task-card p {
+        margin: 0;
+        color: #444;
+    }
+
+    .task-card strong {
+        display: block;
+        color: #1b1b1b;
+        margin-bottom: 4px;
+    }
+
+    .task-card .btn {
+        min-width: 120px;
+    }

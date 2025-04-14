@@ -1,0 +1,38 @@
+﻿@model WebGuide.Models.TaskEntity
+<link rel="stylesheet" href="~/css/delete.css asp-append-version="true" />
+@{
+    ViewData["Title"] = "Видалення завдання";
+}
+
+<div class="container my-5">
+    <div class="task-delete-card mx-auto" style="max-width: 600px;">
+        <h2 class="text-danger mb-4">⚠️ Видалення завдання</h2>
+
+        <h5 class="mb-4">Ви впевнені, що хочете видалити це завдання?</h5>
+
+        <div class="mb-4">
+            <div class="mb-2"><strong>Назва:</strong> @Model.Title</div>
+            <div class="mb-2"><strong>Опис:</strong> @Model.Description</div>
+            <div class="mb-2"><strong>Дедлайн:</strong> @Model.Deadline.ToString("g")</div>
+            <div class="mb-2"><strong>Пріоритет:</strong> @Model.Priority</div>
+            <dt class="col-sm-2">Файл</dt>
+            <dd class="col-sm-10">
+                @if (!string.IsNullOrEmpty(Model.FileUrl))
+                {
+                    <a href="@Model.FileUrl" target="_blank">Переглянути файл</a>
+                }
+                else
+                {
+                    <em>Файл не додано</em>
+                }
+            </dd>
+
+        </div>
+
+        <form asp-action="Delete" method="post" class="d-flex justify-content-between">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">🗑️ Видалити</button>
+            <a asp-action="Index" class="btn btn-outline-light">← Назад до списку</a>
+        </form>
+    </div>
+</div>
