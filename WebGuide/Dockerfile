@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY . .
 
-WORKDIR /src/WebGuide
+WORKDIR /src/coursach1/WebGuide
 
 RUN dotnet publish WebGuide.csproj -c Release -o /app/publish
 
