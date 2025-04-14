@@ -18,24 +18,24 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Create appsettings.Production.json
-      run: echo '${{ secrets.APPSETTINGS_PROD_JSON }}' > appsettings.Production.json
+      run: echo '${{ secrets.APPSETTINGS_PROD_JSON }}' > WebGuide/appsettings.Production.json
 
     - name: Create google-credentials.json
-      run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > google-credentials.json
+      run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > WebGuide/google-credentials.json
 
     - name: Create google-secret.json (optional)
       run: |
         if [ -n "${{ secrets.GOOGLE_SECRET_JSON }}" ]; then
-          echo "${{ secrets.GOOGLE_SECRET_JSON }}" > google-secret.json
+          echo "${{ secrets.GOOGLE_SECRET_JSON }}" > WebGuide/google-secret.json
         else
           echo "google-secret.json not provided, skipping"
         fi
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore WebGuide/WebGuide.csproj
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build WebGuide/WebGuide.csproj --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test --no-build --configuration Release
+      run: dotnet test WebGuide.Tests/WebGuide.Tests.csproj --no-build --configuration Release
