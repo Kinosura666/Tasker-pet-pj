@@ -25,48 +25,57 @@ namespace WebGuide.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(Register model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (_context.Users.Any(u => u.Email == model.Email))
+                if (ModelState.IsValid)
                 {
-                    ModelState.AddModelError("", "User with this email already exists.");
-                    return View("Index", model);
+                    if (_context.Users.Any(u => u.Email == model.Email))
+                    {
+                        ModelState.AddModelError("", "User with this email already exists.");
+                        return View("Index", model);
+                    }
+
+                    string passwordHash = HashPassword(model.Password);
+
+                    var user = new User
+                    {
+                        Username = model.Username,
+                        Email = model.Email.Trim().ToLower(),
+                        PasswordHash = passwordHash,
+                    };
+
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync(); // <=== МОЖЛИВО ТУТ ПАДАЄ
+
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true
+                    };
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    return RedirectToAction("Index", "Profile");
                 }
-                //hash pass
-                string passwordHash = HashPassword(model.Password);
 
-                //saving user
-                var user = new User
-                {
-                    Username = model.Username,
-                    Email = model.Email.Trim().ToLower(),
-                    PasswordHash = passwordHash,
-                };
-
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                // cookies
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = true  // auto login
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                return RedirectToAction("Index", "Profile"); 
+                return View(model);
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Register exception: " + ex.Message);
+                Console.WriteLine("📄 Stack: " + ex.StackTrace);
+                throw;
+            }
         }
+
 
         private string HashPassword(string password)
         {
