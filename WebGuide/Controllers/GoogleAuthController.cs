@@ -28,7 +28,7 @@ namespace WebGuide.Controllers
         public IActionResult LoginWithGoogle()
         {
             var clientId = _config["Authentication:Google:ClientId"];
-            var redirectUri = "https://localhost:7075/oauth2callback";
+            var redirectUri = _config["Authentication:Google:RedirectUri"];
 
             var scopes = string.Join(" ", new[]
             {
@@ -72,7 +72,7 @@ namespace WebGuide.Controllers
             var token = await flow.ExchangeCodeForTokenAsync(
                 userId: "",
                 code: code,
-                redirectUri: "https://localhost:7075/oauth2callback",
+                redirectUri: "https://https://tasker-lce6.onrender.com/oauth2callback",
                 taskCancellationToken: CancellationToken.None
             );
 
