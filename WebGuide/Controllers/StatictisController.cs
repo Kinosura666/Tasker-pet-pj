@@ -87,7 +87,6 @@ namespace WebGuide.Controllers
             return File(data.ToArray(), "image/png");
         }
 
-
         [HttpGet]
         public IActionResult ChartBar()
         {
@@ -137,6 +136,7 @@ namespace WebGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportPdf()
         {
+            CustomFontResolver.Register();
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             var now = DateTime.UtcNow;
