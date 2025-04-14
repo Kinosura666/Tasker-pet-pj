@@ -1,0 +1,38 @@
+name: Build & Prepare Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Create appsettings.Production.json
+      run: echo '${{ secrets.APPSETTINGS_PROD_JSON }}' > appsettings.Production.json
+
+    - name: Create google-credentials.json
+      run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > google-credentials.json
+
+    - name: Create google-secret.json (optional)
+      if: ${{ secrets.GOOGLE_SECRET_JSON != '' }}
+      run: echo '${{ secrets.GOOGLE_SECRET_JSON }}' > google-secret.json
+
+    # ⚙️ Складання і тестування
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release
