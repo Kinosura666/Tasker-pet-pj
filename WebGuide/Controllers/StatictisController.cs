@@ -31,7 +31,7 @@ namespace WebGuide.Controllers
 
             var allTasks = await _context.Tasks.Where(t => t.UserId == user.Id).ToListAsync();
 
-            var stats = _statisticsService.Calculate(allTasks, DateTime.Now);
+            var stats = _statisticsService.Calculate(allTasks, DateTime.UtcNow);
 
             ViewBag.Total = stats.TotalTasks;
             ViewBag.Completed = stats.CompletedTasks;
@@ -52,7 +52,7 @@ namespace WebGuide.Controllers
 
             var total = await _context.Tasks.CountAsync(t => t.UserId == user.Id);
             var completed = await _context.Tasks.CountAsync(t => t.UserId == user.Id && t.IsCompleted);
-            var overdue = await _context.Tasks.CountAsync(t => t.UserId == user.Id && !t.IsCompleted && t.Deadline < DateTime.Now);
+            var overdue = await _context.Tasks.CountAsync(t => t.UserId == user.Id && !t.IsCompleted && t.Deadline < DateTime.UtcNow);
             var active = total - completed - overdue;
 
             string[] labels = { "Виконані", "Прострочені", "Активні" };
@@ -100,9 +100,9 @@ namespace WebGuide.Controllers
 
             var counts = new Dictionary<string, int>
             {
-                { "Очікують", tasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.Now) },
+                { "Очікують", tasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow) },
                 { "Виконано", tasks.Count(t => t.IsCompleted) },
-                { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.Now) }
+                { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
             };
 
             var width = 600;
@@ -146,7 +146,7 @@ namespace WebGuide.Controllers
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var allTasks = await _context.Tasks.Where(t => t.UserId == user.Id).ToListAsync();
             var completed = allTasks.Count(t => t.IsCompleted);
@@ -245,9 +245,9 @@ namespace WebGuide.Controllers
         {
             var counts = new Dictionary<string, int>
             {
-                { "Очікують", tasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.Now) },
+                { "Очікують", tasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow) },
                 { "Виконано", tasks.Count(t => t.IsCompleted) },
-                { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.Now) }
+                { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
             };
 
             var bmp = new Bitmap(400, 400);

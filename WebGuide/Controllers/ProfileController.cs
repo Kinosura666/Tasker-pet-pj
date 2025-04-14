@@ -33,7 +33,7 @@ namespace WebGuide.Controllers
             {
                 Username = user.Username,
                 Email = user.Email,
-                CreatedAt = user.Id > 0 ? user.CreatedAt : DateTime.Now,
+                CreatedAt = user.Id > 0 ? user.CreatedAt : DateTime.UtcNow,
                 TasksCount = tasksCount,
                 ExistingImageUrl = user.ProfileImageUrl
             };

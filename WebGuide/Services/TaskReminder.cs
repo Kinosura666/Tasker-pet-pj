@@ -34,7 +34,7 @@ namespace WebGuide.Services
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     var emailService = scope.ServiceProvider.GetRequiredService<MailjetEmail>();
 
-                    var now = DateTime.Now;
+                    var now = DateTime.UtcNow;
 
                     var tasks = await context.Tasks
                         .Include(t => t.User)

@@ -62,7 +62,7 @@
             2 => "#fd7e14",
             _ => "#198754"
         };
-        var isOverdue = task.Deadline < DateTime.Now && !task.IsCompleted;
+        var isOverdue = task.Deadline < DateTime.UtcNow && !task.IsCompleted;
         var isCompleted = task.IsCompleted ? "opacity-75" : "";
 
         <div class="task-card bg-dark @isCompleted @(isOverdue ? "task-overdue" : "")" style="border: 2px solid @borderColor;">

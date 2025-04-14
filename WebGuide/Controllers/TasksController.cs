@@ -41,7 +41,7 @@ namespace WebGuide.Controllers
 
             if (!showCompletedBool)
             {
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow;
                 tasksQuery = tasksQuery.Where(t => !t.IsCompleted && t.Deadline > now);
             }
 
@@ -49,7 +49,7 @@ namespace WebGuide.Controllers
             {
                 "priorityAsc" => tasksQuery.OrderByDescending(t => t.Priority),
                 "priorityDesc" => tasksQuery.OrderBy(t => t.Priority),
-                "hoursLeft" => tasksQuery.OrderBy(t => EF.Functions.DateDiffMinute(DateTime.Now, t.Deadline)),
+                "hoursLeft" => tasksQuery.OrderBy(t => EF.Functions.DateDiffMinute(DateTime.UtcNow, t.Deadline)),
                 _ => tasksQuery.OrderBy(t => t.Deadline)
             };
 
@@ -254,7 +254,7 @@ namespace WebGuide.Controllers
             if (!task.IsCompleted)
             {
                 task.IsCompleted = true;
-                task.CompletedAt = DateTime.Now;
+                task.CompletedAt = DateTime.UtcNow;
 
                 _logger.LogInformation("✅ Завдання ID {Id} позначене як виконане о {Time}", task.Id, task.CompletedAt);
 
@@ -313,7 +313,7 @@ namespace WebGuide.Controllers
                 .Where(t => t.User.Email == currentUserEmail)
                 .ToListAsync();
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var events = tasks.Select(t => new
             {

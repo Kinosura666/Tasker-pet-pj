@@ -22,7 +22,7 @@ namespace WebGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> SendNow()
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var tasks = await _context.Tasks
                 .Include(t => t.User)
@@ -73,12 +73,12 @@ namespace WebGuide.Controllers
 
                 if (success)
                 {
-                    _logger.LogInformation($"✅ Email надіслано вручну для завдання ID {task.Id}");
+                    _logger.LogInformation($"Email надіслано вручну для завдання ID {task.Id}");
                     task.LastReminderSentAt = now;
                 }
                 else
                 {
-                    _logger.LogWarning($"❗ Помилка під час надсилання email для завдання ID {task.Id}");
+                    _logger.LogWarning($"Помилка під час надсилання email для завдання ID {task.Id}");
                 }
             }
 
