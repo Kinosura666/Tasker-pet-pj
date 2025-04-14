@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
 using System.Security.Claims;
 using WebGuide.Data;
-using System.Drawing.Imaging;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using WebGuide.Models;
@@ -58,38 +56,37 @@ namespace WebGuide.Controllers
 
             string[] labels = { "Виконані", "Прострочені", "Активні" };
             int[] values = { completed, overdue, active };
-            Color[] colors = { Color.FromArgb(40, 167, 69), Color.FromArgb(220, 53, 69), Color.FromArgb(255, 193, 7) };
+            SKColor[] colors = { new(40, 167, 69), new(220, 53, 69), new(255, 193, 7) };
 
-            int width = 400;
-            int height = 450;
+            var imageInfo = new SKImageInfo(500, 500);
+            using var surface = SKSurface.Create(imageInfo);
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.White);
 
-            using var bmp = new Bitmap(width, height);
-            using var gfx = Graphics.FromImage(bmp);
-            gfx.Clear(Color.White);
-
-            var totalSum = values.Sum();
+            float totalSum = values.Sum();
             float startAngle = 0f;
 
+            var rect = new SKRect(100, 100, 400, 400);
             for (int i = 0; i < values.Length; i++)
             {
                 float sweep = (float)values[i] / totalSum * 360f;
-                using var brush = new SolidBrush(colors[i]);
-                gfx.FillPie(brush, 50, 50, 300, 300, startAngle, sweep);
+                using var paint = new SKPaint { Style = SKPaintStyle.Fill, Color = colors[i] };
+                canvas.DrawArc(rect, startAngle, sweep, true, paint);
                 startAngle += sweep;
             }
 
             for (int i = 0; i < labels.Length; i++)
             {
-                gfx.FillRectangle(new SolidBrush(colors[i]), 20, 370 + i * 20, 12, 12);
-                gfx.DrawString($"{labels[i]}: {values[i]}", new System.Drawing.Font("Arial", 10), Brushes.Black, 40, 368 + i * 20);
+                var textPaint = new SKPaint { Color = SKColors.Black, TextSize = 16 };
+                canvas.DrawRect(20, 420 + i * 20, 12, 12, new SKPaint { Color = colors[i] });
+                canvas.DrawText($"{labels[i]}: {values[i]}", 40, 430 + i * 20, textPaint);
             }
 
-            using var stream = new MemoryStream();
-            bmp.Save(stream, ImageFormat.Png);
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return File(stream.ToArray(), "image/png");
+            using var image = surface.Snapshot();
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return File(data.ToArray(), "image/png");
         }
+
 
         [HttpGet]
         public IActionResult ChartBar()
@@ -106,40 +103,35 @@ namespace WebGuide.Controllers
                 { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
             };
 
-            var width = 600;
-            var height = 450;
-            var bitmap = new Bitmap(width, height);
-            using var gfx = Graphics.FromImage(bitmap);
-            gfx.Clear(Color.White);
+            var colors = new[] { SKColors.Orange, SKColors.Green, SKColors.Red };
+            var info = new SKImageInfo(600, 400);
+            using var surface = SKSurface.Create(info);
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.White);
 
-            var barWidth = 100;
-            var maxBarHeight = 300;
-            var spacing = 60;
-
-            var maxValue = counts.Max(c => c.Value);
-            var brushColors = new[] { Brushes.Orange, Brushes.Green, Brushes.Red };
-
-            int x = 80;
+            int max = counts.Values.Max();
+            int barWidth = 100, spacing = 60, x = 60;
             int i = 0;
+
             foreach (var kv in counts)
             {
-                var barHeight = maxValue > 0 ? (kv.Value * maxBarHeight / maxValue) : 0;
-                var y = height - barHeight - 60;
+                float height = max > 0 ? kv.Value * 200 / (float)max : 0;
+                float y = 300 - height;
 
-                gfx.FillRectangle(brushColors[i], x, y, barWidth, barHeight);
-                gfx.DrawRectangle(Pens.Black, x, y, barWidth, barHeight);
+                using var paint = new SKPaint { Color = colors[i], Style = SKPaintStyle.Fill };
+                canvas.DrawRect(x, y, barWidth, height, paint);
 
-                gfx.DrawString(kv.Value.ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, x + 25, y - 20, new StringFormat { Alignment = StringAlignment.Center });
-
-                gfx.DrawString(kv.Key, new Font("Arial", 10), Brushes.Black, x + barWidth / 2, height - 50, new StringFormat { Alignment = StringAlignment.Center });
+                using var textPaint = new SKPaint { Color = SKColors.Black, TextSize = 18 };
+                canvas.DrawText(kv.Key, x, 320, textPaint);
+                canvas.DrawText(kv.Value.ToString(), x, y - 10, textPaint);
 
                 x += barWidth + spacing;
                 i++;
             }
 
-            using var ms = new MemoryStream();
-            bitmap.Save(ms, ImageFormat.Png);
-            return File(ms.ToArray(), "image/png");
+            using var image = surface.Snapshot();
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return File(data.ToArray(), "image/png");
         }
 
         [HttpGet]
