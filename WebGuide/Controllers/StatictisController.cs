@@ -9,6 +9,7 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using WebGuide.Models;
 using WebGuide.Services;
+using SkiaSharp;
 
 namespace WebGuide.Controllers
 {
@@ -144,7 +145,6 @@ namespace WebGuide.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportPdf()
         {
-            CustomFontResolver.Register();
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             var now = DateTime.UtcNow;
@@ -157,7 +157,6 @@ namespace WebGuide.Controllers
             var upcoming30d = allTasks.Count(t => !t.IsCompleted && t.Deadline > now && t.Deadline <= now.AddDays(30));
             var completionPercent = allTasks.Count == 0 ? 0 : (int)((double)completed / allTasks.Count * 100);
 
-            // PDF
             var document = new PdfDocument();
             var page = document.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
@@ -175,11 +174,12 @@ namespace WebGuide.Controllers
             gfx.DrawString($"Спливають за 30 днів: {upcoming30d}", font, XBrushes.Black, new XPoint(40, y += 25));
             gfx.DrawString($"Виконано (%): {completionPercent}%", font, XBrushes.Black, new XPoint(40, y += 25));
 
-            var pieImage = GeneratePieChart(completed, overdue, allTasks.Count - completed - overdue);
+            byte[] pieImage = GeneratePieChart(completed, overdue, allTasks.Count - completed - overdue);
+            byte[] barImage = GenerateBarChart(allTasks);
+
             var pieXImage = XImage.FromStream(() => new MemoryStream(pieImage));
             gfx.DrawImage(pieXImage, 40, y += 40, 250, 250);
 
-            var barImage = GenerateBarChart(allTasks);
             var barXImage = XImage.FromStream(() => new MemoryStream(barImage));
             gfx.DrawImage(barXImage, 310, y - 10, 250, 250);
 
@@ -191,56 +191,38 @@ namespace WebGuide.Controllers
 
         private byte[] GeneratePieChart(int completed, int overdue, int active)
         {
-            string[] labels = { "Виконані", "Прострочені", "Активні" };
-            int[] values = { completed, overdue, active };
-            Color[] colors = { Color.FromArgb(40, 167, 69), Color.FromArgb(220, 53, 69), Color.FromArgb(255, 193, 7) };
+            var values = new[] { completed, overdue, active };
+            var labels = new[] { "Виконані", "Прострочені", "Активні" };
+            var colors = new[] {
+                new SKColor(40, 167, 69),
+                new SKColor(220, 53, 69),
+                new SKColor(255, 193, 7)
+                             };
 
-            int width = 500;
-            int height = 500;
-
-            using var bmp = new Bitmap(width, height);
-            using var gfx = Graphics.FromImage(bmp);
-            gfx.Clear(Color.White);
+            var imageInfo = new SKImageInfo(500, 500);
+            using var surface = SKSurface.Create(imageInfo);
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.White);
 
             float total = values.Sum();
-            float start = 0f;
+            float startAngle = 0;
 
-            Rectangle pieRect = new Rectangle(100, 50, 300, 300);
+            var center = new SKPoint(250, 250);
+            var radius = 150;
 
             for (int i = 0; i < values.Length; i++)
             {
-                float sweep = values[i] / total * 360f;
-                using var brush = new SolidBrush(colors[i]);
-                gfx.FillPie(brush, pieRect, start, sweep);
-
-                float angle = start + sweep / 2;
-                double radians = angle * Math.PI / 180;
-                float centerX = pieRect.X + pieRect.Width / 2;
-                float centerY = pieRect.Y + pieRect.Height / 2;
-                float radius = pieRect.Width / 3f;
-                float textX = centerX + (float)(radius * Math.Cos(radians)) - 15;
-                float textY = centerY + (float)(radius * Math.Sin(radians)) - 10;
-
-                string valueLabel = $"{values[i]}";
-                gfx.DrawString(valueLabel, new Font("Arial", 10, FontStyle.Bold), Brushes.White, textX, textY);
-
-                start += sweep;
+                float sweep = (float)values[i] / total * 360f;
+                using var paint = new SKPaint { Style = SKPaintStyle.Fill, Color = colors[i] };
+                canvas.DrawArc(new SKRect(100, 100, 400, 400), startAngle, sweep, true, paint);
+                startAngle += sweep;
             }
 
-            for (int i = 0; i < labels.Length; i++)
-            {
-                int rectX = 100;
-                int rectY = 370 + i * 25;
-
-                gfx.FillRectangle(new SolidBrush(colors[i]), rectX, rectY, 15, 15);
-                gfx.DrawRectangle(Pens.Black, rectX, rectY, 15, 15);
-                gfx.DrawString($"{labels[i]}: {values[i]}", new Font("Arial", 10), Brushes.Black, rectX + 22, rectY);
-            }
-
-            using var ms = new MemoryStream();
-            bmp.Save(ms, ImageFormat.Png);
-            return ms.ToArray();
+            using var image = surface.Snapshot();
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
         }
+
 
         private byte[] GenerateBarChart(List<TaskEntity> tasks)
         {
@@ -251,29 +233,37 @@ namespace WebGuide.Controllers
                 { "Прострочено", tasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
             };
 
-            var bmp = new Bitmap(400, 400);
-            using var gfx = Graphics.FromImage(bmp);
-            gfx.Clear(Color.White);
+            var colors = new[] { SKColors.Orange, SKColors.Green, SKColors.Red };
+            var imageInfo = new SKImageInfo(600, 400);
+            using var surface = SKSurface.Create(imageInfo);
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.White);
 
-            int barWidth = 80, spacing = 50, x = 50, maxHeight = 200;
             int max = counts.Values.Max();
-
-            var brushes = new[] { Brushes.Orange, Brushes.Green, Brushes.Red };
+            int barWidth = 100, spacing = 60, x = 60;
             int i = 0;
+
             foreach (var kv in counts)
             {
-                int height = max > 0 ? (kv.Value * maxHeight / max) : 0;
-                gfx.FillRectangle(brushes[i], x, 250 - height, barWidth, height);
-                gfx.DrawString(kv.Key, new Font("Arial", 10), Brushes.Black, x, 260);
-                gfx.DrawString(kv.Value.ToString(), new Font("Arial", 10, FontStyle.Bold), Brushes.Black, x, 230 - height);
+                float height = max > 0 ? kv.Value * 200 / (float)max : 0;
+                float y = 300 - height;
+
+                using var paint = new SKPaint { Color = colors[i], Style = SKPaintStyle.Fill };
+                canvas.DrawRect(x, y, barWidth, height, paint);
+
+                using var textPaint = new SKPaint { Color = SKColors.Black, TextSize = 18 };
+                canvas.DrawText(kv.Key, x, 320, textPaint);
+                canvas.DrawText(kv.Value.ToString(), x, y - 10, textPaint);
+
                 x += barWidth + spacing;
                 i++;
             }
 
-            using var ms = new MemoryStream();
-            bmp.Save(ms, ImageFormat.Png);
-            return ms.ToArray();
+            using var image = surface.Snapshot();
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
         }
+
 
     }
 }
