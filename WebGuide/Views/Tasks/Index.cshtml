@@ -91,8 +91,7 @@
                         ❌ Завдання прострочене!
                     </div>
                 }
-
-                @if (task.IsCompleted && completedAtLocal.HasValue)
+                else if (task.IsCompleted && completedAtLocal.HasValue)
                 {
                     <div class="alert alert-success py-2 px-3 rounded-3">
                         ✅ Завдання виконано <strong>@completedAtLocal.Value.ToString("g")</strong><br />
@@ -112,6 +111,7 @@
                     <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-sm btn-danger">🗑 Видалити</a>
                 </div>
             </div>
+
         </div>
     }
 </div>
