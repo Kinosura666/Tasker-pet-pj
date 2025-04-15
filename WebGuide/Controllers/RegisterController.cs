@@ -48,10 +48,10 @@ namespace WebGuide.Controllers
                     await _context.SaveChangesAsync();
 
                     var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
+                    {
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Email, user.Email)
+                    };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
@@ -62,11 +62,9 @@ namespace WebGuide.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
-
                     return RedirectToAction("Index", "Profile");
                 }
-
-                return View(model);
+                return View("Index", model);
             }
             catch (Exception ex)
             {
