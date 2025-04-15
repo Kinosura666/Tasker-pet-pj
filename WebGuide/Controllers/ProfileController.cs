@@ -64,11 +64,10 @@ namespace WebGuide.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Перевірка помилок:
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 foreach (var error in errors)
                 {
-                    Console.WriteLine(error); // Або ILogger
+                    Console.WriteLine(error);
                 }
 
                 return View(model);

@@ -41,9 +41,9 @@ namespace WebGuide.Controllers
 
             if (!showCompletedBool)
             {
-                var now = DateTime.UtcNow;
-                tasksQuery = tasksQuery.Where(t => !t.IsCompleted && t.Deadline > now);
+                tasksQuery = tasksQuery.Where(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow);
             }
+
 
             tasksQuery = sortBy switch
             {
