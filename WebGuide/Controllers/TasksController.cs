@@ -49,8 +49,6 @@ namespace WebGuide.Controllers
             {
                 "priorityAsc" => tasksQuery.OrderByDescending(t => t.Priority),
                 "priorityDesc" => tasksQuery.OrderBy(t => t.Priority),
-                "hoursLeft" => tasksQuery.OrderBy(t => EF.Functions.DateDiffMinute(DateTime.UtcNow, t.Deadline)),
-                _ => tasksQuery.OrderBy(t => t.Deadline)
             };
 
             ViewBag.SortBy = sortBy;

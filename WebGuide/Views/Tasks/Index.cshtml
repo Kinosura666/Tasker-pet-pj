@@ -61,15 +61,19 @@
             2 => "#fd7e14",
             _ => "#198754"
         };
-        var isOverdue = task.Deadline < DateTime.UtcNow && !task.IsCompleted;
-        var isCompleted = task.IsCompleted ? "opacity-75" : "";
 
-        <div class="task-card bg-dark @isCompleted @(isOverdue ? "task-overdue" : "")" style="border: 2px solid @borderColor;">
+        var kyivZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+        var deadlineLocal = TimeZoneInfo.ConvertTimeFromUtc(task.Deadline, kyivZone);
+        var completedAtLocal = task.CompletedAt.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(task.CompletedAt.Value, kyivZone) : (DateTime?)null;
 
+        bool isOverdue = deadlineLocal < DateTime.Now && !task.IsCompleted;
+        var isCompletedClass = task.IsCompleted ? "opacity-75" : "";
+
+        <div class="task-card bg-dark @isCompletedClass @(isOverdue ? "task-overdue" : "")" style="border: 2px solid @borderColor;">
             <h5 class="mb-2">@task.Title</h5>
 
             <p class="mb-1"><strong>📝 Опис:</strong><br />@task.Description</p>
-            <p class="mb-1"><strong>📅 Дедлайн:</strong><br />@task.Deadline.ToString("g")</p>
+            <p class="mb-1"><strong>📅 Дедлайн:</strong><br />@deadlineLocal.ToString("g")</p>
             <p class="mb-1"><strong>⭐ Пріоритет:</strong> @task.Priority</p>
 
             @if (!string.IsNullOrEmpty(task.FileUrl))
@@ -87,14 +91,11 @@
                     </div>
                 }
 
-                @if (task.IsCompleted)
+                @if (task.IsCompleted && completedAtLocal.HasValue)
                 {
-                    var completedAtKyiv = TimeZoneInfo.ConvertTimeFromUtc(task.CompletedAt.Value, TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
-                    var deadlineKyiv = TimeZoneInfo.ConvertTimeFromUtc(task.Deadline, TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
-
                     <div class="alert alert-success py-2 px-3 rounded-3">
-                        ✅ Завдання виконано <strong>@completedAtKyiv.ToString("g")</strong><br />
-                        ⏱ За <strong>@(Math.Round((deadlineKyiv - completedAtKyiv).TotalHours)) год</strong> до дедлайну
+                        ✅ Завдання виконано <strong>@completedAtLocal.Value.ToString("g")</strong><br />
+                        ⏱ За <strong>@(Math.Round((deadlineLocal - completedAtLocal.Value).TotalHours)) год</strong> до дедлайну
                     </div>
                 }
                 else if (!isOverdue)
@@ -113,3 +114,4 @@
         </div>
     }
 </div>
+
