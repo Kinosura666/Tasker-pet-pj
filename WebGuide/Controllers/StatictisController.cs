@@ -145,11 +145,12 @@ namespace WebGuide.Controllers
             var center = new PointF(width / 2f, height / 2f);
             float radius = 150f;
             float startAngle = 0;
-            FontFamily fontFamily = SystemFonts.Families
-                .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
-
+            var fontFamily = SystemFonts.Families.FirstOrDefault();
             if (fontFamily.Equals(default(FontFamily)))
-                fontFamily = SystemFonts.Families.First();
+            {
+                throw new Exception("❌ No fonts found. Install fonts-dejavu in Dockerfile.");
+            }
+
 
             var font = fontFamily.CreateFont(14);
 
@@ -206,11 +207,12 @@ namespace WebGuide.Controllers
             int max = data.Values.Any() ? data.Values.Max() : 1;
             int x = 50;
 
-            FontFamily fontFamily = SystemFonts.Families
-            .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
-
+            var fontFamily = SystemFonts.Families.FirstOrDefault();
             if (fontFamily.Equals(default(FontFamily)))
-                fontFamily = SystemFonts.Families.First();
+            {
+                throw new Exception("❌ No fonts found. Install fonts-dejavu in Dockerfile.");
+            }
+;
 
             var font = fontFamily.CreateFont(14);
 
