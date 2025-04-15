@@ -41,7 +41,8 @@ namespace WebGuide.Controllers
 
             if (!showCompletedBool)
             {
-                tasksQuery = tasksQuery.Where(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow);
+                var now = DateTime.UtcNow;
+                tasksQuery = tasksQuery.Where(t => !t.IsCompleted && t.Deadline > now);
             }
 
 
@@ -122,7 +123,8 @@ namespace WebGuide.Controllers
                     model.FileUrl = fileUrl;
                 }
             }
-            model.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Utc);
+            var kyivZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+            model.Deadline = TimeZoneInfo.ConvertTimeToUtc(model.Deadline, kyivZone);
             _context.Tasks.Add(model);
             await _context.SaveChangesAsync();
 
