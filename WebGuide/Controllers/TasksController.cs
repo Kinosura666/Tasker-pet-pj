@@ -223,9 +223,13 @@ namespace WebGuide.Controllers
                 if (existingTask == null)
                     return NotFound();
 
+                var kyivZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+                model.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Unspecified);
+                model.Deadline = TimeZoneInfo.ConvertTimeToUtc(model.Deadline, kyivZone);
+
                 existingTask.Title = model.Title;
                 existingTask.Description = model.Description;
-                existingTask.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Utc); 
+                existingTask.Deadline = model.Deadline;
                 existingTask.Priority = model.Priority;
 
 

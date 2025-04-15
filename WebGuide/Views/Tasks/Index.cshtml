@@ -66,7 +66,8 @@
         var deadlineLocal = TimeZoneInfo.ConvertTimeFromUtc(task.Deadline, kyivZone);
         var completedAtLocal = task.CompletedAt.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(task.CompletedAt.Value, kyivZone) : (DateTime?)null;
 
-        bool isOverdue = deadlineLocal < DateTime.Now && !task.IsCompleted;
+        var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, kyivZone);
+        bool isOverdue = deadlineLocal < nowLocal && !task.IsCompleted;
         var isCompletedClass = task.IsCompleted ? "opacity-75" : "";
 
         <div class="task-card bg-dark @isCompletedClass @(isOverdue ? "task-overdue" : "")" style="border: 2px solid @borderColor;">
@@ -98,7 +99,7 @@
                         ⏱ За <strong>@(Math.Round((deadlineLocal - completedAtLocal.Value).TotalHours)) год</strong> до дедлайну
                     </div>
                 }
-                else if (!isOverdue)
+                else
                 {
                     <form asp-action="Complete" method="post" class="btn-stack">
                         <input type="hidden" name="id" value="@task.Id" />
