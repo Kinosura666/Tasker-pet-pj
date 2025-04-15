@@ -38,4 +38,4 @@ jobs:
       run: dotnet build WebGuide/WebGuide.csproj --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test WebGuide.Tests/WebGuide.Tests.csproj --no-build --configuration Release
+      run: dotnet test --configuration Release --logger:"console;verbosity=normal"
