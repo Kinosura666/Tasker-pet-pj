@@ -63,6 +63,26 @@ namespace WebGuide.Controllers
             return File(chartBytes, "image/png");
         }
 
+        [HttpGet("/Statistics/ChartBar")]
+        public async Task<IActionResult> ChartBar()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            var allTasks = await _context.Tasks.Where(t => t.UserId == user.Id).ToListAsync();
+
+            var data = new Dictionary<string, int>
+            {
+                { "Очікують", allTasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow) },
+                { "Виконано", allTasks.Count(t => t.IsCompleted) },
+                { "Прострочено", allTasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
+            };
+
+            var chart = GenerateBarChartImageSharp(data);
+            return File(chart, "image/png");
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> ExportPdf()
         {
@@ -112,6 +132,7 @@ namespace WebGuide.Controllers
             image.Mutate(ctx => ctx.Fill(SixLabors.ImageSharp.Color.White));
 
             float[] values = { completed, overdue, active };
+            string[] labels = { "Виконані", "Прострочені", "Активні" };
             var colors = new[] {
                 SixLabors.ImageSharp.Color.Green,
                 SixLabors.ImageSharp.Color.Red,
@@ -123,6 +144,14 @@ namespace WebGuide.Controllers
             var center = new PointF(width / 2f, height / 2f);
             float radius = 150f;
 
+            FontFamily fontFamily = SystemFonts.Families
+                .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
+
+            if (fontFamily.Equals(default(FontFamily)))
+                fontFamily = SystemFonts.Families.First();
+
+            var font = fontFamily.CreateFont(14);
+
             for (int i = 0; i < values.Length; i++)
             {
                 float sweepAngle = values[i] / total * 360f;
@@ -131,7 +160,7 @@ namespace WebGuide.Controllers
                 var pathBuilder = new PathBuilder();
                 pathBuilder.MoveTo(center);
 
-                int segments = 50; 
+                int segments = 50;
                 for (int j = 0; j <= segments; j++)
                 {
                     float angle = startAngle + (sweepAngle * j / segments);
@@ -149,10 +178,21 @@ namespace WebGuide.Controllers
                 startAngle += sweepAngle;
             }
 
+            // Додати легенду
+            for (int i = 0; i < labels.Length; i++)
+            {
+                float y = 370 + i * 22;
+                image.Mutate(ctx => {
+                    ctx.Fill(colors[i], new RectangleF(20, y, 14, 14));
+                    ctx.DrawText($"{labels[i]}: {values[i]}", font, SixLabors.ImageSharp.Color.Black, new PointF(40, y - 2));
+                });
+            }
+
             using var ms = new MemoryStream();
             image.SaveAsPng(ms);
             return ms.ToArray();
         }
+
 
         private byte[] GenerateBarChartImageSharp(Dictionary<string, int> data)
         {
@@ -164,11 +204,22 @@ namespace WebGuide.Controllers
             int max = data.Values.Max();
             if (max == 0) max = 1;
             int x = 50;
-            var font = SystemFonts.Families
-            .First(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase))
-            .CreateFont(14);
+
+            FontFamily fontFamily = SystemFonts.Families
+                .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
+
+            if (fontFamily.Equals(default(FontFamily)))
+                fontFamily = SystemFonts.Families.First();
+
+            var font = fontFamily.CreateFont(14);
 
             int i = 0;
+            var colors = new[] {
+                SixLabors.ImageSharp.Color.Orange,
+                SixLabors.ImageSharp.Color.Green,
+                SixLabors.ImageSharp.Color.Red
+            };
+
             foreach (var item in data)
             {
                 int barHeight = (int)(item.Value / (float)max * maxHeight);
@@ -176,9 +227,7 @@ namespace WebGuide.Controllers
 
                 image.Mutate(ctx =>
                 {
-                    ctx.Fill(new[] { SixLabors.ImageSharp.Color.Orange, SixLabors.ImageSharp.Color.Green, SixLabors.ImageSharp.Color.Red }[i],
-                             new Rectangle(x, y, barWidth, barHeight));
-
+                    ctx.Fill(colors[i], new Rectangle(x, y, barWidth, barHeight));
                     ctx.DrawText(item.Value.ToString(), font, SixLabors.ImageSharp.Color.Black, new PointF(x + 10, y - 20));
                     ctx.DrawText(item.Key, font, SixLabors.ImageSharp.Color.Black, new PointF(x, height - 40));
                 });
