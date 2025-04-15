@@ -94,9 +94,9 @@ namespace WebGuide.Controllers
             byte[] pie = GeneratePieChartImageSharp(stats.CompletedTasks, stats.OverdueTasks, stats.TotalTasks - stats.CompletedTasks - stats.OverdueTasks);
             var bar = GenerateBarChartImageSharp(new Dictionary<string, int>
             {
-                {"Очікують", stats.TasksNext3Days},
-                {"Виконано", stats.CompletedTasks},
-                {"Прострочено", stats.OverdueTasks}
+                { "Очікують", allTasks.Count(t => !t.IsCompleted && t.Deadline > DateTime.UtcNow) },
+                { "Виконано", allTasks.Count(t => t.IsCompleted) },
+                { "Прострочено", allTasks.Count(t => !t.IsCompleted && t.Deadline <= DateTime.UtcNow) }
             });
 
             var doc = Document.Create(container =>
@@ -107,7 +107,7 @@ namespace WebGuide.Controllers
                     page.Size(PageSizes.A4);
                     page.Content().Column(col =>
                     {
-                        col.Item().Text("📈 Статистика користувача").FontSize(20).Bold();
+                        col.Item().Text("Статистика користувача").FontSize(20).Bold();
                         col.Item().Text($"Завдань: {stats.TotalTasks}");
                         col.Item().Text($"Виконано: {stats.CompletedTasks}");
                         col.Item().Text($"Прострочено: {stats.OverdueTasks}");
