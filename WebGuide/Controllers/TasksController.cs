@@ -122,7 +122,7 @@ namespace WebGuide.Controllers
                     model.FileUrl = fileUrl;
                 }
             }
-            model.Deadline = model.Deadline.ToUniversalTime();
+            model.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Utc);
             _context.Tasks.Add(model);
             await _context.SaveChangesAsync();
 
@@ -176,16 +176,16 @@ namespace WebGuide.Controllers
                     {
                         var calendarService = HttpContext.RequestServices.GetRequiredService<GoogleCalendarService>();
                         await calendarService.AddTaskToCalendarAsync(model, accessToken);
-                        _logger.LogInformation("📅 Подію додано в Google Календар");
+                        _logger.LogInformation("Подію додано в Google Календар");
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "❌ Помилка при додаванні події до Google Календаря");
+                        _logger.LogError(ex, "Помилка при додаванні події до Google Календаря");
                     }
                 }
                 else
                 {
-                    _logger.LogWarning("⚠️ Google токен відсутній — подію не додано до календаря");
+                    _logger.LogWarning("Google токен відсутній — подію не додано до календаря");
                 }
             }
 
@@ -224,7 +224,7 @@ namespace WebGuide.Controllers
 
                 existingTask.Title = model.Title;
                 existingTask.Description = model.Description;
-                existingTask.Deadline = model.Deadline.ToUniversalTime();
+                existingTask.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Utc); 
                 existingTask.Priority = model.Priority;
 
 
