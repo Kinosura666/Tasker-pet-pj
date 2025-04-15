@@ -49,6 +49,7 @@ namespace WebGuide.Controllers
             {
                 "priorityAsc" => tasksQuery.OrderByDescending(t => t.Priority),
                 "priorityDesc" => tasksQuery.OrderBy(t => t.Priority),
+                _ => tasksQuery.OrderBy(t => t.Deadline)
             };
 
             ViewBag.SortBy = sortBy;
