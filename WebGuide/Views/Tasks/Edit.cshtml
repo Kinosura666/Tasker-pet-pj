@@ -23,9 +23,15 @@
                 <span asp-validation-for="Description" class="text-danger small"></span>
             </div>
 
+            @{
+                var kyivTime = TimeZoneInfo.ConvertTimeFromUtc(Model.Deadline, TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
+            }
             <div class="mb-3">
                 <label asp-for="Deadline" class="form-label"></label>
-                <input asp-for="Deadline" class="form-control" type="datetime-local" />
+                <input name="Deadline"
+                       type="datetime-local"
+                       class="form-control"
+                       value="@kyivTime.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="Deadline" class="text-danger small"></span>
             </div>
 
