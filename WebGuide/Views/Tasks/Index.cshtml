@@ -89,9 +89,12 @@
 
                 @if (task.IsCompleted)
                 {
+                    var completedAtKyiv = TimeZoneInfo.ConvertTimeFromUtc(task.CompletedAt.Value, TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
+                    var deadlineKyiv = TimeZoneInfo.ConvertTimeFromUtc(task.Deadline, TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv"));
+
                     <div class="alert alert-success py-2 px-3 rounded-3">
-                        ✅ Завдання виконано <strong>@task.CompletedAt?.ToString("g")</strong><br />
-                        ⏱ За <strong>@(Math.Round((task.CompletedAt.Value - task.Deadline).TotalHours * -1)) год</strong> до дедлайну
+                        ✅ Завдання виконано <strong>@completedAtKyiv.ToString("g")</strong><br />
+                        ⏱ За <strong>@(Math.Round((deadlineKyiv - completedAtKyiv).TotalHours)) год</strong> до дедлайну
                     </div>
                 }
                 else if (!isOverdue)
