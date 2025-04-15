@@ -99,8 +99,6 @@ namespace WebGuide.Controllers
                     Console.WriteLine(err);
             }
 
-
-            // UserID = current user
             var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == currentUserEmail);
             if (currentUser != null)
@@ -124,6 +122,7 @@ namespace WebGuide.Controllers
                 }
             }
             var kyivZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Kyiv");
+            model.Deadline = DateTime.SpecifyKind(model.Deadline, DateTimeKind.Unspecified);
             model.Deadline = TimeZoneInfo.ConvertTimeToUtc(model.Deadline, kyivZone);
             _context.Tasks.Add(model);
             await _context.SaveChangesAsync();
