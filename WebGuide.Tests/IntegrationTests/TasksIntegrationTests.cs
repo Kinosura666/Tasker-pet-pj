@@ -47,7 +47,7 @@ namespace WebGuide.Tests.IntegrationTests
         }
 
 
-        [Fact]
+        [Fact(Skip = "Потребує ручного налаштування")]
         public async Task CreateTask_Should_SaveTaskInDatabase()
         {
             var formData = new MultipartFormDataContent
@@ -68,7 +68,7 @@ namespace WebGuide.Tests.IntegrationTests
             createdTask.Description.Should().Be("Integration test description");
         }
 
-        [Fact]
+        [Fact(Skip = "Потребує ручного налаштування")]
         public async Task Tasks_Complete_Should_SetIsCompletedToTrue()
         {
             var user = _dbContext.Users.First(u => u.Email == "test@example.com");
