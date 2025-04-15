@@ -112,9 +112,9 @@ namespace WebGuide.Tests.Services
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
-            { "Trello:ApiKey", "key" },
-            { "Trello:Token", "token" },
-            { "Trello:ListId", "list123" }
+                    { "Trello:ApiKey", "key" },
+                    { "Trello:Token", "token" },
+                    { "Trello:ListId", "list123" }
                 })
                 .Build();
 

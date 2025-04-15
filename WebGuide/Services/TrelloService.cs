@@ -30,7 +30,7 @@ namespace WebGuide.Services
                 { "idList", _listId },
                 { "name", task.Title },
                 { "desc", task.Description },
-                { "due", task.Deadline.ToString("o") } // ISO 8601 формат, якщо deadline вказаний
+                { "due", task.Deadline.ToString("o") }
             };
 
             var content = new FormUrlEncodedContent(values);

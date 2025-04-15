@@ -68,8 +68,8 @@ namespace WebGuide.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Register exception: " + ex.Message);
-                Console.WriteLine("📄 Stack: " + ex.StackTrace);
+                Console.WriteLine("Register exception: " + ex.Message);
+                Console.WriteLine("Stack: " + ex.StackTrace);
                 throw;
             }
         }

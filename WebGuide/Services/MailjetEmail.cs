@@ -47,24 +47,23 @@ namespace WebGuide.Services
             {
                 Messages = new[]
                 {
-            new
-            {
-                From = new { Email = senderEmail, Name = senderName },
-                To = new[] { new { Email = toEmail, Name = toName } },
-                Subject = subject,
-                HTMLPart = htmlContent
-            }
-        }
+                    new
+                    {
+                        From = new { Email = senderEmail, Name = senderName },
+                        To = new[] { new { Email = toEmail, Name = toName } },
+                        Subject = subject,
+                        HTMLPart = htmlContent
+                    }
+                }
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("https://api.mailjet.com/v3.1/send", content);
 
-            // 💡 Додай логування статусу + повідомлення
             var responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"📬 MAILJET STATUS: {(int)response.StatusCode} {response.ReasonPhrase}");
-            Console.WriteLine($"📨 MAILJET RESPONSE BODY: {responseBody}");
+            Console.WriteLine($"MAILJET STATUS: {(int)response.StatusCode} {response.ReasonPhrase}");
+            Console.WriteLine($"MAILJET RESPONSE BODY: {responseBody}");
 
             return response.IsSuccessStatusCode;
         }

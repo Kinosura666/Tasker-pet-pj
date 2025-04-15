@@ -91,9 +91,9 @@ namespace WebGuide.Services
                             {
                                 try
                                 {
-                                    _logger.LogInformation($"✅ Email надіслано автоматично для завдання ID {task.Id}");
+                                    _logger.LogInformation($"Email надіслано автоматично для завдання ID {task.Id}");
                                 }
-                                catch (ObjectDisposedException) { /* логер вже не активний – ігноруємо */ }
+                                catch (ObjectDisposedException) { }
                             }
                         }
                         else
@@ -102,9 +102,9 @@ namespace WebGuide.Services
                             {
                                 try
                                 {
-                                    _logger.LogWarning($"❗ Помилка під час надсилання email (авто) для завдання ID {task.Id}");
+                                    _logger.LogWarning($"Помилка під час надсилання email (авто) для завдання ID {task.Id}");
                                 }
-                                catch (ObjectDisposedException) { /* ігноруємо */ }
+                                catch (ObjectDisposedException) { }
                             }
                         }
 
@@ -114,7 +114,7 @@ namespace WebGuide.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "❌ Помилка у фоні TaskReminderBackgroundService");
+                    _logger.LogError(ex, "Помилка у фоні TaskReminderBackgroundService");
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);

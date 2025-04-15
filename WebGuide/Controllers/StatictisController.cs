@@ -209,7 +209,7 @@ namespace WebGuide.Controllers
             var fontFamily = SystemFonts.Families.FirstOrDefault();
             if (fontFamily.Equals(default(FontFamily)))
             {
-                throw new Exception("❌ No fonts found. Install fonts-dejavu in Dockerfile.");
+                throw new Exception(" No fonts found. Install fonts-dejavu in Dockerfile.");
             }
 ;
 
