@@ -48,7 +48,7 @@ namespace WebGuide.Controllers
             return View(stats);
         }
 
-        [HttpGet("/Statistics/Chart")]
+        [HttpGet("/Statistics/ChartPie")]
         public async Task<IActionResult> GetChart()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -140,10 +140,11 @@ namespace WebGuide.Controllers
             };
 
             float total = values.Sum();
-            float startAngle = 0;
+            if (total == 0) total = 1;
+
             var center = new PointF(width / 2f, height / 2f);
             float radius = 150f;
-
+            float startAngle = 0;
             FontFamily fontFamily = SystemFonts.Families
                 .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
 
@@ -155,7 +156,6 @@ namespace WebGuide.Controllers
             for (int i = 0; i < values.Length; i++)
             {
                 float sweepAngle = values[i] / total * 360f;
-                float endAngle = startAngle + sweepAngle;
 
                 var pathBuilder = new PathBuilder();
                 pathBuilder.MoveTo(center);
@@ -165,20 +165,18 @@ namespace WebGuide.Controllers
                 {
                     float angle = startAngle + (sweepAngle * j / segments);
                     float rad = MathF.PI * angle / 180f;
-
-                    float x = center.X + radius * MathF.Cos(rad);
-                    float y = center.Y + radius * MathF.Sin(rad);
-                    pathBuilder.LineTo(new PointF(x, y));
+                    pathBuilder.LineTo(new PointF(
+                        center.X + radius * MathF.Cos(rad),
+                        center.Y + radius * MathF.Sin(rad)
+                    ));
                 }
 
                 pathBuilder.CloseFigure();
-                var slice = pathBuilder.Build();
-                image.Mutate(ctx => ctx.Fill(colors[i], slice));
+                image.Mutate(ctx => ctx.Fill(colors[i], pathBuilder.Build()));
 
                 startAngle += sweepAngle;
             }
 
-            // Додати легенду
             for (int i = 0; i < labels.Length; i++)
             {
                 float y = 370 + i * 22;
@@ -188,11 +186,15 @@ namespace WebGuide.Controllers
                 });
             }
 
+            if (values.All(v => v == 0))
+            {
+                image.Mutate(ctx => ctx.DrawText("Немає даних", font, SixLabors.ImageSharp.Color.Gray, new PointF(150, 200)));
+            }
+
             using var ms = new MemoryStream();
             image.SaveAsPng(ms);
             return ms.ToArray();
         }
-
 
         private byte[] GenerateBarChartImageSharp(Dictionary<string, int> data)
         {
@@ -201,25 +203,24 @@ namespace WebGuide.Controllers
             image.Mutate(ctx => ctx.Fill(SixLabors.ImageSharp.Color.White));
 
             int barWidth = 80, spacing = 40, maxHeight = 200;
-            int max = data.Values.Max();
-            if (max == 0) max = 1;
+            int max = data.Values.Any() ? data.Values.Max() : 1;
             int x = 50;
 
             FontFamily fontFamily = SystemFonts.Families
-                .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase));
 
             if (fontFamily.Equals(default(FontFamily)))
                 fontFamily = SystemFonts.Families.First();
 
             var font = fontFamily.CreateFont(14);
 
-            int i = 0;
             var colors = new[] {
                 SixLabors.ImageSharp.Color.Orange,
                 SixLabors.ImageSharp.Color.Green,
                 SixLabors.ImageSharp.Color.Red
             };
 
+            int i = 0;
             foreach (var item in data)
             {
                 int barHeight = (int)(item.Value / (float)max * maxHeight);
@@ -236,10 +237,16 @@ namespace WebGuide.Controllers
                 i++;
             }
 
+            if (data.Values.All(v => v == 0))
+            {
+                image.Mutate(ctx => ctx.DrawText("Немає даних", font, SixLabors.ImageSharp.Color.Gray, new PointF(150, 200)));
+            }
+
             using var ms = new MemoryStream();
             image.SaveAsPng(ms);
             return ms.ToArray();
         }
+
 
     }
 }
