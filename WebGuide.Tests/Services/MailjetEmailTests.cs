@@ -14,6 +14,9 @@ namespace WebGuide.Tests.Services
     public class MailjetEmailTests
     {
         [Fact]
+        public void FailTest_ShouldFail() => Assert.True(false);
+
+        [Fact]
         public async Task SendEmailAsync_ReturnsTrue_WhenSuccessful()
         {
             var handlerMock = new Mock<HttpMessageHandler>();
