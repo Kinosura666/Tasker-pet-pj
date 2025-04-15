@@ -29,6 +29,8 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
+var redirect = builder.Configuration["Authentication:Google:RedirectUri"];
+Console.WriteLine("Loaded redirect URI: " + redirect);
 
 builder.Services.AddSession();
 

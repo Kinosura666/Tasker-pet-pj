@@ -29,7 +29,13 @@ namespace WebGuide.Controllers
         {
             var clientId = _config["Authentication:Google:ClientId"];
             var redirectUri = _config["Authentication:Google:RedirectUri"];
+            Console.WriteLine($"Google Client ID: {clientId}");
+            Console.WriteLine($"Google Redirect URI: {redirectUri}");
 
+            if (string.IsNullOrEmpty(redirectUri))
+            {
+                return Content("❌ redirect_uri is empty! Перевір конфігурацію.");
+            }
             var scopes = string.Join(" ", new[]
             {
                 "https://www.googleapis.com/auth/calendar.events",
