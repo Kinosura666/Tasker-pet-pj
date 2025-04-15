@@ -113,10 +113,10 @@ namespace WebGuide.Controllers
 
             float[] values = { completed, overdue, active };
             var colors = new[] {
-        SixLabors.ImageSharp.Color.Green,
-        SixLabors.ImageSharp.Color.Red,
-        SixLabors.ImageSharp.Color.Orange
-    };
+                SixLabors.ImageSharp.Color.Green,
+                SixLabors.ImageSharp.Color.Red,
+                SixLabors.ImageSharp.Color.Orange
+            };
 
             float total = values.Sum();
             float startAngle = 0;
@@ -154,27 +154,35 @@ namespace WebGuide.Controllers
             return ms.ToArray();
         }
 
-
-
         private byte[] GenerateBarChartImageSharp(Dictionary<string, int> data)
         {
             int width = 500, height = 400;
             var image = new Image<Rgba32>(width, height);
             image.Mutate(ctx => ctx.Fill(SixLabors.ImageSharp.Color.White));
 
-            int barWidth = 100, spacing = 40, maxHeight = 200;
+            int barWidth = 80, spacing = 40, maxHeight = 200;
             int max = data.Values.Max();
+            if (max == 0) max = 1;
             int x = 50;
-            var font = SystemFonts.CreateFont("Arial", 16);
+            var font = SystemFonts.Families
+            .First(f => f.Name.Contains("Sans", StringComparison.OrdinalIgnoreCase))
+            .CreateFont(14);
 
             int i = 0;
             foreach (var item in data)
             {
                 int barHeight = (int)(item.Value / (float)max * maxHeight);
-                var barColor = new[] { SixLabors.ImageSharp.Color.Orange, SixLabors.ImageSharp.Color.Green, SixLabors.ImageSharp.Color.Red }[i];
-                image.Mutate(ctx => ctx.Fill(barColor, new Rectangle(x, height - barHeight - 50, barWidth, barHeight)));
-                image.Mutate(ctx => ctx.DrawText(item.Key, font, SixLabors.ImageSharp.Color.Black, new PointF(x, height - 30)));
-                image.Mutate(ctx => ctx.DrawText(item.Value.ToString(), font, SixLabors.ImageSharp.Color.Black, new PointF(x, height - barHeight - 70)));
+                int y = height - barHeight - 60;
+
+                image.Mutate(ctx =>
+                {
+                    ctx.Fill(new[] { SixLabors.ImageSharp.Color.Orange, SixLabors.ImageSharp.Color.Green, SixLabors.ImageSharp.Color.Red }[i],
+                             new Rectangle(x, y, barWidth, barHeight));
+
+                    ctx.DrawText(item.Value.ToString(), font, SixLabors.ImageSharp.Color.Black, new PointF(x + 10, y - 20));
+                    ctx.DrawText(item.Key, font, SixLabors.ImageSharp.Color.Black, new PointF(x, height - 40));
+                });
+
                 x += barWidth + spacing;
                 i++;
             }
@@ -183,5 +191,6 @@ namespace WebGuide.Controllers
             image.SaveAsPng(ms);
             return ms.ToArray();
         }
+
     }
 }
