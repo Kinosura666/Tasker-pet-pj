@@ -31,7 +31,7 @@ namespace WebGuide.Controllers
                 {
                     if (_context.Users.Any(u => u.Email == model.Email))
                     {
-                        ModelState.AddModelError("", "User with this email already exists.");
+                        ModelState.AddModelError("Email", "Користувач з такою поштою вже існує.");
                         return View("Index", model);
                     }
 
