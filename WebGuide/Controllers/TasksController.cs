@@ -321,13 +321,13 @@ namespace WebGuide.Controllers
                 title = t.Title,
                 start = t.Deadline.ToString("yyyy-MM-ddTHH:mm:ss"),
                 url = Url.Action("Details", "Tasks", new { id = t.Id }),
-                backgroundColor = t.IsCompleted ? "#6c757d" : // сірий
-                                  t.Deadline < now ? "#f88383" : // просрочене
+                backgroundColor = t.IsCompleted ? "#6c757d" : 
+                                  t.Deadline < now ? "#f88383" : 
                                   t.Priority switch
                                   {
-                                      1 => "#ff0000", // висока
-                                      2 => "#fd7e14", // середня
-                                      _ => "#198754"  // низька
+                                      1 => "#ff0000", 
+                                      2 => "#fd7e14", 
+                                      _ => "#198754"  
                                   },
                 textColor = "#ffffff"
             });

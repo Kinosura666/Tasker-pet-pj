@@ -82,7 +82,6 @@ namespace WebGuide.Controllers
             return File(chart, "image/png");
         }
 
-
         [HttpGet]
         public async Task<IActionResult> ExportPdf()
         {
