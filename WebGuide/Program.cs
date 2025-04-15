@@ -12,7 +12,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-CustomFontResolver.Register();
 builder.Services.AddHttpClient<TrelloService>();
 builder.Services.AddSingleton<GoogleCloudStorageService>();
 builder.Services.AddHttpClient<MailjetEmail>(); 
