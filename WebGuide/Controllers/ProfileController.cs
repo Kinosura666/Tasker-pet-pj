@@ -33,7 +33,7 @@ namespace WebGuide.Controllers
             {
                 Username = user.Username,
                 Email = user.Email,
-                CreatedAt = user.Id > 0 ? TimeZoneInfo.ConvertTimeFromUtc(user.CreatedAt, TimeZoneInfo.FindSystemTimeZoneById("FLE Standard Time")) : DateTime.Now,
+                CreatedAt = user.CreatedAt,
                 TasksCount = tasksCount,
                 ExistingImageUrl = user.ProfileImageUrl
             };
